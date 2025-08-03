@@ -10,12 +10,12 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-white font-bold">CR</span>
+                <span className="text-white font-bold">SL</span>
               </div>
-              <span className="font-semibold text-lg">ClientSync</span>
+              <span className="font-semibold text-lg">SmartLeads AI</span>
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              The intelligent CRM that works for you. Boost your sales with AI-powered insights.
+              The intelligent CRM that works for you. Boost your leads with AI-powered insights.
             </p>
             <div className="flex gap-4">
               <a href="#" className="text-gray-500 hover:text-primary transition-colors">
@@ -37,11 +37,11 @@ const Footer = () => {
           </div>
           
           <div>
-            <h3 className="font-medium text-sm uppercase text-gray-500 mb-4">Product</h3>
+            <h3 className="font-medium text-sm uppercase text-gray-500 mb-4">Action</h3>
             <ul className="space-y-2">
               <li><Link to="/dashboard" className="text-sm hover:text-primary transition-colors">Dashboard</Link></li>
               <li><Link to="/leads" className="text-sm hover:text-primary transition-colors">Leads</Link></li>
-              <li><Link to="/customers" className="text-sm hover:text-primary transition-colors">Customers</Link></li>
+              <li><Link to="/analytics" className="text-sm hover:text-primary transition-colors">Analytics</Link></li>
               <li><Link to="/pipeline" className="text-sm hover:text-primary transition-colors">Pipeline</Link></li>
             </ul>
           </div>
@@ -69,10 +69,10 @@ const Footer = () => {
         
         <div className="border-t border-gray-200 dark:border-gray-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            © {new Date().getFullYear()} ClientSync. All rights reserved.
+            © {new Date().getFullYear()} SmartLeads AI. All rights reserved.
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center mt-2 md:mt-0">
-            Made with <Heart size={14} className="mx-1 text-red-500" /> for better sales
+            Made with <Heart size={14} className="mx-1 text-red-500" /> for better leads management.
           </p>
         </div>
       </div>

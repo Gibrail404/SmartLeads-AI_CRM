@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { 
   Users, 
   LineChart, 
-  DollarSign, 
+  IndianRupee as RupeeSign, 
   Target, 
   BarChart3, 
   Zap,
@@ -131,8 +131,8 @@ const Dashboard = () => {
           >
             <StatCard
               title="Total Revenue"
-              value="$125,430"
-              icon={<DollarSign className="h-5 w-5 text-primary" />}
+              value="₹125,430"
+              icon={<RupeeSign className="h-5 w-5 text-primary" />}
               change={{ value: 12.5, trend: 'up' }}
               tooltip="Total revenue generated this period"
             />
@@ -273,7 +273,7 @@ const Dashboard = () => {
         </motion.div>
         
         {/* Action Buttons */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
@@ -302,7 +302,7 @@ const Dashboard = () => {
               </Button>
             </Link>
           </div>
-        </motion.div>
+        </motion.div> */}
         
         {/* AI Chatbot Assistant */}
         <ChatAssistant />

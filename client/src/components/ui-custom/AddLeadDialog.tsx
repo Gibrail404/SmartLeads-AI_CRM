@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/select';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { addLead } from '@/api/auth'; 
 
 const AddLeadDialog = () => {
   const [open, setOpen] = useState(false);
@@ -63,15 +64,7 @@ const AddLeadDialog = () => {
         lastContact: new Date().toISOString(),
       };
 
-      const res = await axios.post(
-        'http://localhost:5000/api/v1/lead/createlead',
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await addLead(payload)
 
       toast({
         title: 'Lead Added',
@@ -155,7 +148,7 @@ const AddLeadDialog = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="value">Est. Value ($)</Label>
+              <Label htmlFor="value">Est. Value (₹)</Label>
               <Input id="value" type="number" value={form.value} onChange={handleChange} />
             </div>
           </div>

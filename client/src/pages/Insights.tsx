@@ -227,8 +227,8 @@ const Insights = () => {
                         +8.3%
                       </div>
                     </div>
-                    <p className="text-2xl font-bold mt-2">$8,245</p>
-                    <p className="text-xs text-muted-foreground mt-1">vs $7,612 last period</p>
+                    <p className="text-2xl font-bold mt-2">₹8,245</p>
+                    <p className="text-xs text-muted-foreground mt-1">vs ₹7,612 last period</p>
                   </div>
                   
                   <div className="p-4 sm:p-6">
@@ -310,7 +310,7 @@ const Insights = () => {
                     Based on current pipeline and conversion rates, projected quarterly revenue is:
                   </p>
                   <div className="flex items-end gap-2">
-                    <span className="text-2xl font-bold">$1.24M</span>
+                    <span className="text-2xl font-bold">₹1.24M</span>
                     <span className="text-green-600 text-sm font-medium mb-1 flex items-center">
                       <TrendingUp className="h-3 w-3 mr-1" />
                       +14% vs target

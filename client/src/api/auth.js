@@ -27,10 +27,22 @@ export const updateUser = async (data) => {
 
 export const getLeads = async () => {
   const res = await api.get('/lead/getlead'); 
-  return res.data;
+  return res;
 };
 
-export const createLead = async (data) => {
+export const addLead = async (data) => {
   const res = await api.post('/lead/createlead', data); 
   return res.data;
+}
+
+export const aiChat = async (data) => {
+  const res = await api.post('/ai/chat', data); 
+  return res.data;
+}
+
+
+
+export const getUserId = async () => {
+  const res = await api.get('/user/me'); 
+  return res;
 }

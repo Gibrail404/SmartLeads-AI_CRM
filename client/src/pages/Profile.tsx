@@ -213,7 +213,7 @@ const Profile = () => {
                   <div className="space-y-4">
                     <div>
                       <div className="mb-1 flex justify-between text-sm">
-                        <span>Sales Target</span>
+                        <span>Revenue</span>
                         <span className="font-medium">87%</span>
                       </div>
                       <div className="h-2 w-full rounded-full bg-muted">
@@ -223,17 +223,7 @@ const Profile = () => {
 
                     <div>
                       <div className="mb-1 flex justify-between text-sm">
-                        <span>Customer Satisfaction</span>
-                        <span className="font-medium">95%</span>
-                      </div>
-                      <div className="h-2 w-full rounded-full bg-muted">
-                        <div className="h-2 rounded-full bg-primary" style={{ width: '95%' }}></div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="mb-1 flex justify-between text-sm">
-                        <span>Lead Conversion</span>
+                        <span>Lead</span>
                         <span className="font-medium">62%</span>
                       </div>
                       <div className="h-2 w-full rounded-full bg-muted">
@@ -243,7 +233,7 @@ const Profile = () => {
 
                     <div>
                       <div className="mb-1 flex justify-between text-sm">
-                        <span>Team Contribution</span>
+                        <span>Conversion</span>
                         <span className="font-medium">78%</span>
                       </div>
                       <div className="h-2 w-full rounded-full bg-muted">

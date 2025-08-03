@@ -11,7 +11,7 @@ import {
   TrendingUp, 
   TrendingDown, 
   Users, 
-  DollarSign, 
+  IndianRupee, 
   Target, 
   Calendar,
   Filter,
@@ -250,7 +250,7 @@ const Analytics = () => {
                       +18.7% vs last month
                     </p>
                   </div>
-                  <DollarSign className="h-8 w-8 text-muted-foreground" />
+                  <IndianRupee className="h-8 w-8 text-muted-foreground" />
                 </div>
               </CardContent>
             </Card>

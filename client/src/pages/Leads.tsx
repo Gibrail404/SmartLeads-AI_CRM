@@ -26,11 +26,7 @@ const Leads = () => {
       setError(null);
 
       //const res = await getLeads();
-      const res = await axios.get('http://localhost:5000/api/v1/lead/getlead', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // or use cookie/session if applicable
-        },
-      });
+      const res = await getLeads();
 
       setLeads(res.data);
     } catch (err) {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import axios from 'axios';
+import { getUserId } from '@/api/auth'; // Adjust the import path as necessary
 
 interface User {
   id: string;
@@ -22,12 +23,7 @@ const ProtectedRoute = () => {
       }
 
       try {
-        const res = await axios.get('http://localhost:5000/api/v1/user/me', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
+        const res = await getUserId();
         setUser(res.data.user);
       } catch (error) {
         console.error('User auth check failed:', error);

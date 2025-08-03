@@ -8,6 +8,7 @@ import ChatHeader from './chat/ChatHeader';
 import MessageList from './chat/MessageList';
 import ChatInput from './chat/ChatInput';
 import { faqData, FaqItem } from './chat/faqData';
+import { aiChat } from '@/api/auth'; // Adjust the import path as necessary
 
 // Example message history
 const initialMessages = [
@@ -55,41 +56,83 @@ const ChatAssistant = () => {
     setShowFaq(false);
   };
 
-  const sendMessage = () => {
-    if (!inputMessage.trim()) return;
+  // const sendMessage = () => {
+  //   if (!inputMessage.trim()) return;
     
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      sender: 'user',
-      text: inputMessage,
+  //   const userMessage: Message = {
+  //     id: Date.now().toString(),
+  //     sender: 'user',
+  //     text: inputMessage,
+  //     timestamp: new Date().toISOString(),
+  //   };
+    
+  //   setMessages([...messages, userMessage]);
+  //   setInputMessage('');
+  //   setIsTyping(true);
+    
+  //   // Simulate AI response after a short delay
+  //   setTimeout(() => {
+  //     const botResponses = [
+  //       "I can help with that! Let me analyze your data and provide some insights.",
+  //       "Based on your leads data, I recommend following up with the high-scoring prospects first.",
+  //       "Your sales pipeline shows 3 deals that need attention. Would you like me to schedule follow-up reminders?",
+  //       "I've analyzed your customer interaction patterns. The best time to contact your leads is Tuesday morning.",
+  //       "Your conversion rate has improved by 12% this month. Keep up the good work!",
+  //     ];
+      
+  //     const botMessage: Message = {
+  //       id: (Date.now() + 1).toString(),
+  //       sender: 'bot',
+  //       text: botResponses[Math.floor(Math.random() * botResponses.length)],
+  //       timestamp: new Date().toISOString(),
+  //     };
+      
+  //     setMessages(messages => [...messages, botMessage]);
+  //     setIsTyping(false);
+  //   }, 1500);
+  // };
+
+  const sendMessage = async () => {
+  if (!inputMessage.trim()) return;
+
+  const userMessage: Message = {
+    id: Date.now().toString(),
+    sender: 'user',
+    text: inputMessage,
+    timestamp: new Date().toISOString(),
+  };
+
+  setMessages(prev => [...prev, userMessage]);
+  setInputMessage('');
+  setIsTyping(true);
+
+  try {
+    const data = await aiChat({ message: inputMessage });
+    console.log("aiChat response:", inputMessage);
+
+    const botMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      sender: 'bot',
+      text: data.reply,
       timestamp: new Date().toISOString(),
     };
-    
-    setMessages([...messages, userMessage]);
-    setInputMessage('');
-    setIsTyping(true);
-    
-    // Simulate AI response after a short delay
-    setTimeout(() => {
-      const botResponses = [
-        "I can help with that! Let me analyze your data and provide some insights.",
-        "Based on your leads data, I recommend following up with the high-scoring prospects first.",
-        "Your sales pipeline shows 3 deals that need attention. Would you like me to schedule follow-up reminders?",
-        "I've analyzed your customer interaction patterns. The best time to contact your leads is Tuesday morning.",
-        "Your conversion rate has improved by 12% this month. Keep up the good work!",
-      ];
-      
-      const botMessage: Message = {
+
+    setMessages(prev => [...prev, botMessage]);
+  } catch (err) {
+    console.error(err);
+    setMessages(prev => [
+      ...prev,
+      {
         id: (Date.now() + 1).toString(),
         sender: 'bot',
-        text: botResponses[Math.floor(Math.random() * botResponses.length)],
+        text: 'Failed to connect to AI server.',
         timestamp: new Date().toISOString(),
-      };
-      
-      setMessages(messages => [...messages, botMessage]);
-      setIsTyping(false);
-    }, 1500);
-  };
+      },
+    ]);
+  }
+
+  setIsTyping(false);
+};
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
