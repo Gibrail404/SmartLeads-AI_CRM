@@ -1,1 +1,1 @@
-# smart_leads_ai_crm
+# SmartLeads-AI_CRM
