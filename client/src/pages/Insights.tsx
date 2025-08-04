@@ -1,18 +1,18 @@
 import { motion } from 'framer-motion';
-import { 
-  Lightbulb, 
-  TrendingUp, 
-  AlertCircle, 
-  Clock, 
-  ArrowUpRight, 
-  Users, 
+import {
+  Lightbulb,
+  TrendingUp,
+  AlertCircle,
+  Clock,
+  ArrowUpRight,
+  Users,
   DollarSign,
   Target,
   LineChart,
   BarChart,
   Calendar
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PageLayout from '@/components/ui-custom/PageLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,10 +20,31 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Link } from 'react-router-dom';
+import { kpiMetrics } from '@/api/auth';
 
 const Insights = () => {
   const [timeFrame, setTimeFrame] = useState('7days');
-  
+
+  const [kpis, setKpi] = useState({
+    conversionRate: 0,
+    averageDealSize: 0,
+    averageSalesCycle: 0,
+    winRate: 0
+  });
+
+  useEffect(() => {
+    const fetchKpi = async () => {
+      try {
+        const res = await kpiMetrics();
+        setKpi(res);
+        console.log("res", res);
+      } catch (err) {
+        console.error("KPI Fetch Error", err?.response?.data || err.message);
+      }
+    };
+    fetchKpi();
+  }, []);
+
   const insightCategories = [
     { id: 'all', name: 'All Insights' },
     { id: 'leads', name: 'Lead Insights' },
@@ -31,7 +52,7 @@ const Insights = () => {
     { id: 'performance', name: 'Performance Insights' },
     { id: 'opportunities', name: 'Opportunities' },
   ];
-  
+
   // Mock insights data
   const insightsData = [
     {
@@ -101,7 +122,7 @@ const Insights = () => {
       iconColor: 'text-blue-600'
     },
   ];
-  
+
   // Recommended actions
   const recommendedActions = [
     {
@@ -169,7 +190,7 @@ const Insights = () => {
   return (
     <PageLayout>
       <div className="container mx-auto px-4 py-8">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -180,10 +201,10 @@ const Insights = () => {
               <h1 className="text-2xl font-bold tracking-tight">AI Insights</h1>
               <p className="text-muted-foreground">AI-powered business intelligence to help you make better decisions</p>
             </div>
-            
+
             <div className="flex items-center gap-3">
-              <Select 
-                defaultValue={timeFrame} 
+              <Select
+                defaultValue={timeFrame}
                 onValueChange={setTimeFrame}
               >
                 <SelectTrigger className="w-[150px]">
@@ -198,8 +219,8 @@ const Insights = () => {
               </Select>
             </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="md:col-span-3">
               <CardHeader>
                 <CardTitle>Key Performance Metrics</CardTitle>
@@ -257,8 +278,68 @@ const Insights = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
-          
+          </div> */}
+          <Card className="md:col-span-3">
+            <CardHeader>
+              <CardTitle>Key Performance Metrics</CardTitle>
+              <CardDescription>AI-analyzed performance indicators for your business</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x">
+
+                <div className="p-4 sm:p-6">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-muted-foreground">Lead Conversion Rate</p>
+                    <div className="bg-green-100 text-green-600 px-2 py-1 rounded text-xs font-medium flex items-center">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      +12%
+                    </div>
+                  </div>
+                  <p className="text-2xl font-bold mt-2">{kpis?.conversionRate}%</p>
+                  <p className="text-xs text-muted-foreground mt-1">vs 21.0% last period</p>
+                </div>
+
+                <div className="p-4 sm:p-6">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-muted-foreground">Avg. Deal Size</p>
+                    <div className="bg-green-100 text-green-600 px-2 py-1 rounded text-xs font-medium flex items-center">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      +8.3%
+                    </div>
+                  </div>
+                  <p className="text-2xl font-bold mt-2">₹{kpis?.averageDealSize}</p>
+                  <p className="text-xs text-muted-foreground mt-1">vs ₹7,612 last period</p>
+                </div>
+
+                <div className="p-4 sm:p-6">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-muted-foreground">Sales Cycle</p>
+                    <div className="bg-amber-100 text-amber-600 px-2 py-1 rounded text-xs font-medium flex items-center">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      +2.1%
+                    </div>
+                  </div>
+                  <p className="text-2xl font-bold mt-2">{kpis.averageSalesCycle} days</p>
+                  <p className="text-xs text-muted-foreground mt-1">vs 17.6 days last period</p>
+                </div>
+
+                <div className="p-4 sm:p-6">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-muted-foreground">Win Rate</p>
+                    <div className="bg-green-100 text-green-600 px-2 py-1 rounded text-xs font-medium flex items-center">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      +5.4%
+                    </div>
+                  </div>
+                  <p className="text-2xl font-bold mt-2">{kpis?.winRate}%</p>
+                  <p className="text-xs text-muted-foreground mt-1">vs 33.4% last period</p>
+                </div>
+
+              </div>
+            </CardContent>
+          </Card>
+
+
           <Tabs defaultValue="all">
             <div className="flex items-center justify-between">
               <TabsList>
@@ -269,14 +350,14 @@ const Insights = () => {
                 ))}
               </TabsList>
             </div>
-            
+
             {/* All Insights Tab */}
             <TabsContent value="all" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {insightsData.map(insight => renderInsightCard(insight))}
               </div>
             </TabsContent>
-            
+
             {/* Other category tabs */}
             {insightCategories.slice(1).map(category => (
               <TabsContent key={category.id} value={category.id} className="mt-6">
@@ -288,7 +369,7 @@ const Insights = () => {
               </TabsContent>
             ))}
           </Tabs>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="md:col-span-2">
               <CardHeader>
@@ -317,7 +398,7 @@ const Insights = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="p-4 border rounded-lg">
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
@@ -339,7 +420,7 @@ const Insights = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="p-4 border rounded-lg">
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
@@ -363,7 +444,7 @@ const Insights = () => {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle>Recommended Actions</CardTitle>

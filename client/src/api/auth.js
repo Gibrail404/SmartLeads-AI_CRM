@@ -46,3 +46,16 @@ export const getUserId = async () => {
   const res = await api.get('/user/me'); 
   return res;
 }
+
+
+// Ai Insights 
+export const kpiMetrics = async () => {
+  const res = await api.get('/insights/kpimetrics'); 
+  return res.data;
+}
+
+//Analytics
+export const getAnalytics = async () => {
+  const res = await api.get('/analytics/all'); 
+  return res.data;
+}

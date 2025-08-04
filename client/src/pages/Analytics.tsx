@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PageLayout from '@/components/ui-custom/PageLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,12 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Users, 
-  IndianRupee, 
-  Target, 
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import {
+  TrendingUp,
+  TrendingDown,
+  Users,
+  IndianRupee,
+  Target,
   Calendar,
   Filter,
   Download,
@@ -37,6 +39,8 @@ import {
   Line,
   Legend
 } from 'recharts';
+import { getAnalytics } from '@/api/auth';
+
 
 const Analytics = () => {
   const [timeRange, setTimeRange] = useState('30d');
@@ -44,41 +48,148 @@ const Analytics = () => {
   const [leadStatus, setLeadStatus] = useState('all');
   const [leadSource, setLeadSource] = useState('all');
 
-  // Sample data for analytics
-  const performanceData = [
-    { name: 'Jan', leads: 45, conversions: 12, revenue: 24000 },
-    { name: 'Feb', leads: 52, conversions: 18, revenue: 36000 },
-    { name: 'Mar', leads: 48, conversions: 15, revenue: 30000 },
-    { name: 'Apr', leads: 61, conversions: 22, revenue: 44000 },
-    { name: 'May', leads: 55, conversions: 19, revenue: 38000 },
-    { name: 'Jun', leads: 67, conversions: 28, revenue: 56000 },
-    { name: 'Jul', leads: 59, conversions: 24, revenue: 48000 },
-    { name: 'Aug', leads: 72, conversions: 31, revenue: 62000 }
-  ];
+  const [loading, setLoading] = useState(true);
+  const [analyticsData, setAnalyticsData] = useState(null);
 
-  const sourceData = [
-    { name: 'Website', value: 35, color: '#8884d8' },
-    { name: 'Social Media', value: 28, color: '#82ca9d' },
-    { name: 'Email Campaign', value: 20, color: '#ffc658' },
-    { name: 'Referrals', value: 12, color: '#ff7c7c' },
-    { name: 'Direct', value: 5, color: '#8dd1e1' }
-  ];
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const res = await getAnalytics();
+        setAnalyticsData(res);
+      } catch (error) {
+        console.error('Error fetching analytics:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const conversionData = [
-    { stage: 'Leads', count: 520, percentage: 100 },
-    { stage: 'Qualified', count: 312, percentage: 60 },
-    { stage: 'Proposals', count: 156, percentage: 30 },
-    { stage: 'Negotiations', count: 78, percentage: 15 },
-    { stage: 'Closed Won', count: 52, percentage: 10 }
-  ];
+    fetchAnalytics();
+  }, []);
 
-  const recentLeads = [
-    { id: 1, name: 'Alice Johnson', company: 'Tech Corp', source: 'Website', status: 'Hot', value: 15000 },
-    { id: 2, name: 'Bob Smith', company: 'Finance Ltd', source: 'Social Media', status: 'Warm', value: 12000 },
-    { id: 3, name: 'Carol Brown', company: 'Retail Inc', source: 'Email', status: 'Cold', value: 8000 },
-    { id: 4, name: 'David Wilson', company: 'Manufacturing Co', source: 'Referral', status: 'Hot', value: 22000 },
-    { id: 5, name: 'Emma Davis', company: 'Consulting Group', source: 'Website', status: 'Warm', value: 18000 }
-  ];
+  if (loading) {
+    return (
+      <PageLayout>
+        <div className="p-8 text-center text-muted-foreground">Loading analytics...</div>
+      </PageLayout>
+    );
+  }
+
+  if (!analyticsData) {
+    return (
+      <PageLayout>
+        <div className="p-8 text-center text-red-500">Failed to load analytics data.</div>
+      </PageLayout>
+    );
+  }
+
+  // Data for analytics
+
+  const getMonthName = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleString('default', { month: 'short' }); // "Jun"
+  };
+
+  const rawPerformanceData = analyticsData?.performanceData || [];
+
+  const monthlyPerformanceMap = {};
+
+  rawPerformanceData.forEach(stageData => {
+    const stage = stageData.stage;
+    stageData.trend.forEach(({ date, count }) => {
+      const month = getMonthName(date);
+
+      if (!monthlyPerformanceMap[month]) {
+        monthlyPerformanceMap[month] = {
+          name: month,
+          leads: 0,
+          conversions: 0,
+          revenue: 0
+        };
+      }
+
+      monthlyPerformanceMap[month].leads += count;
+
+      if (stage === 'Won') {
+        monthlyPerformanceMap[month].conversions += count;
+      }
+    });
+  });
+
+  const performanceData = Object.values(monthlyPerformanceMap);
+
+
+  const sourceData = analyticsData?.leadSourceData?.map(item => ({
+    name: item.source,
+    value: item.count,
+    color: item.color,
+  })) || [];
+
+  const conversionData = analyticsData?.conversionData?.map(item => ({
+    stage: item.stage,
+    count: item.count,
+    percentage: item.percentage,
+  })) || [];
+
+  const recentLeads = analyticsData?.recentLeads?.map((lead, index) => ({
+    id: index + 1, // Assigning sequential IDs
+    name: lead.name,
+    company: lead.company,
+    source: lead.source,
+    status: lead.status,
+    value: lead.value,
+  })) || [];
+
+
+  // handle export 
+  const handleExport = () => {
+    const wb = XLSX.utils.book_new();
+
+    // 1. Metrics Sheet
+    const metricsData = [
+      ['Metric', 'Value'],
+      ['Total Leads', analyticsData?.metrics?.totalLeads],
+      ['Conversion Rate (%)', analyticsData?.metrics?.conversionRate],
+      ['Revenue Generated', analyticsData?.metrics?.revenueGenerated],
+      ['Average Deal Size', analyticsData?.metrics?.avgDealSize],
+    ];
+    const metricsSheet = XLSX.utils.aoa_to_sheet(metricsData);
+    XLSX.utils.book_append_sheet(wb, metricsSheet, 'Metrics');
+
+    // 2. Performance Trends Sheet
+    const trendsSheet = XLSX.utils.json_to_sheet(performanceData);
+    XLSX.utils.book_append_sheet(wb, trendsSheet, 'Performance Trends');
+
+    // 3. Lead Sources Sheet
+    const leadSources = sourceData.map(({ name, value }) => ({
+      Source: name,
+      Count: value
+    }));
+    const sourceSheet = XLSX.utils.json_to_sheet(leadSources);
+    XLSX.utils.book_append_sheet(wb, sourceSheet, 'Lead Sources');
+
+    // 4. Conversion Funnel Sheet
+    const conversionSheet = XLSX.utils.json_to_sheet(conversionData.map(({ stage, count, percentage }) => ({
+      Stage: stage,
+      Count: count,
+      Percentage: percentage
+    })));
+    XLSX.utils.book_append_sheet(wb, conversionSheet, 'Conversion Funnel');
+
+    // 5. High-Value Leads Sheet
+    const leadsSheet = XLSX.utils.json_to_sheet(recentLeads.map(({ name, company, source, status, value }) => ({
+      Name: name,
+      Company: company,
+      Source: source,
+      Status: status,
+      Value: value
+    })));
+    XLSX.utils.book_append_sheet(wb, leadsSheet, 'High-Value Leads');
+
+    // Export workbook
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+    saveAs(blob, 'Lead_Analytics_Export.xlsx');
+  };
 
   const renderChart = () => {
     const commonProps = {
@@ -130,7 +241,7 @@ const Analytics = () => {
   return (
     <PageLayout>
       <div className="container mx-auto px-4 py-8">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -143,13 +254,9 @@ const Analytics = () => {
               <p className="text-muted-foreground">In-depth analysis of your lead performance and conversion metrics.</p>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={handleExport}>
                 <Download className="h-4 w-4 mr-2" />
                 Export
-              </Button>
-              <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4 mr-2" />
-                Filters
               </Button>
             </div>
           </div>
@@ -212,7 +319,7 @@ const Analytics = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Total Leads</p>
-                    <p className="text-2xl font-bold">1,247</p>
+                    <p className="text-2xl font-bold">{analyticsData?.metrics?.totalLeads}</p>
                     <p className="text-xs text-green-600 flex items-center">
                       <TrendingUp className="h-3 w-3 mr-1" />
                       +12.5% vs last month
@@ -228,7 +335,7 @@ const Analytics = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Conversion Rate</p>
-                    <p className="text-2xl font-bold">24.8%</p>
+                    <p className="text-2xl font-bold">{analyticsData?.metrics?.conversionRate}%</p>
                     <p className="text-xs text-green-600 flex items-center">
                       <TrendingUp className="h-3 w-3 mr-1" />
                       +3.2% vs last month
@@ -244,7 +351,7 @@ const Analytics = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Revenue Generated</p>
-                    <p className="text-2xl font-bold">₹3.2M</p>
+                    <p className="text-2xl font-bold">₹{analyticsData?.metrics?.revenueGenerated}</p>
                     <p className="text-xs text-green-600 flex items-center">
                       <TrendingUp className="h-3 w-3 mr-1" />
                       +18.7% vs last month
@@ -260,7 +367,7 @@ const Analytics = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Avg. Deal Size</p>
-                    <p className="text-2xl font-bold">₹25.6K</p>
+                    <p className="text-2xl font-bold">₹{analyticsData?.metrics?.avgDealSize}</p>
                     <p className="text-xs text-red-600 flex items-center">
                       <TrendingDown className="h-3 w-3 mr-1" />
                       -2.1% vs last month
@@ -359,8 +466,8 @@ const Analytics = () => {
                         <span className="text-sm text-muted-foreground">{stage.percentage}%</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full">
-                        <div 
-                          className="h-2 bg-primary rounded-full" 
+                        <div
+                          className="h-2 bg-primary rounded-full"
                           style={{ width: `${stage.percentage}%` }}
                         />
                       </div>
@@ -396,8 +503,10 @@ const Analytics = () => {
                         <td className="py-3 px-4">{lead.source}</td>
                         <td className="py-3 px-4">
                           <Badge variant={
-                            lead.status === 'Hot' ? 'destructive' : 
-                            lead.status === 'Warm' ? 'default' : 'secondary'
+                            lead.status === 'Lost' ? 'destructive' :
+                              lead.status === 'Open' ? 'outline' :
+                                lead.status === 'Qualified' ? 'secondary' :
+                                  lead.status === 'Won' ? 'default' : 'outline'
                           }>
                             {lead.status}
                           </Badge>
