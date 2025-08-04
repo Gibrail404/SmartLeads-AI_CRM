@@ -62,7 +62,7 @@ const LeadCard = ({ lead, onUpdate }: LeadCardProps) => {
       case 'Proposal': return 'bg-amber-500';
       case 'Negotiation': return 'bg-orange-500';
       case 'Won': return 'bg-green-500';
-      case 'Lost': return 'bg-gray-500';
+      case 'Lost': return 'bg-red-500';
       default: return 'bg-gray-500';
     }
   };

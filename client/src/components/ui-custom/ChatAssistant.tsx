@@ -149,7 +149,7 @@ const ChatAssistant = () => {
     <>
       {/* Chat trigger button */}
       <motion.div
-        className="fixed bottom-5 right-5 z-50"
+        className="fixed bottom-14 right-5 z-50"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.3 }}
