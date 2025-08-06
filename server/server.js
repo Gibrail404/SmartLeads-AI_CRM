@@ -30,7 +30,7 @@ app.get('/health', (req, res) => {
 });
 
 // Routes
-app.use('/api/v1', routes);
+app.use('/', routes);
 
 
 // Global Error Handler
