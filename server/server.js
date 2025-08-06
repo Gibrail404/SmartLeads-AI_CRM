@@ -13,7 +13,7 @@ connectDB(); // MongoDB connection
 
 app.use(cors(
   {
-  origin: 'http://localhost:8080', // frontend origin
+  origin: 'https://smart-leads-ai-crm.vercel.app', //'http://localhost:8080', // frontend origin
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }
