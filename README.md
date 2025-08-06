@@ -73,7 +73,7 @@ To run SmartLeads-AI_CRM locally:
 
 ## Demo
 
-Live Demo: [https://smart-leads-ai-crm](https://smart-leads-ai-crm.vercel.app/)
+Live Demo: [smart-leads-ai-crm](https://smart-leads-ai-crm.vercel.app)
 
 ## Video
 
