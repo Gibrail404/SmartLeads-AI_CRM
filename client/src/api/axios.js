@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+const isProd = window.location.hostname !== 'localhost';
+
+const baseURL = isProd
+  ? 'https://smartleads-ai-crm.onrender.com/api/v1'
+  : 'http://localhost:5000/api/v1';
+
 const api = axios.create({
-  baseURL: 'https://smartleads-ai-crm.onrender.com/api/v1', //'http://localhost:5000/api/v1'
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
 });
 

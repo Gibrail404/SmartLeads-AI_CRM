@@ -15,7 +15,14 @@ connectDB(); // MongoDB connection
 
 app.use(cors(
   {
-  origin: 'https://smart-leads-ai-crm.vercel.app', //'http://localhost:8080', // frontend origin
+  origin: function(origin, callback) {
+    const allowedOrigins = ['https://smart-leads-ai-crm.vercel.app', 'http://localhost:5173'];
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }, 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }

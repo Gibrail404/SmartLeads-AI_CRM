@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./server
+    container_name: smartleads-backend
+    working_dir: /app
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/smartsynccrm
+      - JWT_SECRET=jbkciewbe243rt832bf48632r74ggf74f9w20f4f
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    command: npm run dev
+    restart: always
+    depends_on:
+      - mongo
+
+  frontend:
+    build: ./client
+    container_name: smartleads-frontend
+    working_dir: /app
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    command: npm run dev -- --host
+    restart: always
+    depends_on:
+      - backend
+
+  mongo:
+    image: mongo
+    container_name: smartleads-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: always
+
+volumes:
+  mongo-data:
