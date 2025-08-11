@@ -14,8 +14,8 @@ const Auth = () => {
   const [tab, setTab] = useState<'login' | 'signup'>('login');
 
   const [loginData, setLoginData] = useState({
-    email: '',
-    password: '',
+    email: 'gibrail@example.com',
+    password: 'Secret123',
   });
 
   const [signupData, setSignupData] = useState({
