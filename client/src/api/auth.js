@@ -59,3 +59,9 @@ export const getAnalytics = async () => {
   const res = await api.get('/analytics/all'); 
   return res.data;
 }
+
+//Pipelines
+export const getPipelines = async () => {
+  const res = await api.get('/pipeline/filter'); 
+  return res.data;
+}

@@ -1,8 +1,8 @@
 import express from 'express';
-import { filterLeads } from '../controllers/pipeline.controller.js';
+import { filterDeals } from '../controllers/pipeline.controller.js';
 
 const router = express.Router();
 
-router.get('/filter', filterLeads);
+router.get('/filter', filterDeals);
 
 export default router;

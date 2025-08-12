@@ -1,18 +1,18 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PageLayout from '@/components/ui-custom/PageLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Plus, 
-  Filter, 
-  ListFilter, 
-  Calendar, 
-  ChevronDown, 
-  Clock, 
-  Users, 
+import {
+  Plus,
+  Filter,
+  ListFilter,
+  Calendar,
+  ChevronDown,
+  Clock,
+  Users,
   CreditCard,
-  BarChart3 
+  BarChart3
 } from 'lucide-react';
 import SalesKanban from '@/components/ui-custom/SalesKanban';
 import { LeadData } from '@/components/ui-custom/LeadCard';
@@ -43,86 +43,35 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import StatCard from '@/components/ui-custom/StatCard';
+import axios from 'axios';
 
 const Pipeline = () => {
   const [showAddDealForm, setShowAddDealForm] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState({
-    stage: "all",
-    value: "all",
-    age: "all",
-    assignee: "all"
-  });
   const [activeTab, setActiveTab] = useState("list");
+  const [filters, setFilters] = useState({
+    stage: "all_stages",
+    dealValue: "all_values",
+    dealAge: "all_time",
+  });
+  const [pipelineData, setPipelineData] = useState([]);
 
-  const leads: LeadData[] = [
-    {
-      id: "1",
-      name: 'John Smith',
-      company: 'Acme Corp',
-      email: 'john.smith@acme.com',
-      phone: '(555) 123-4567',
-      status: 'New',
-      aiScore: 85,
-      lastContact: '2 days ago',
-      value: 5000,
-    },
-    {
-      id: "2",
-      name: 'Sarah Johnson',
-      company: 'Tech Solutions Inc',
-      email: 'sarah.j@techsolutions.com',
-      phone: '(555) 987-6543',
-      status: 'Contacted',
-      aiScore: 72,
-      lastContact: '1 week ago',
-      value: 8500,
-    },
-    {
-      id: "3",
-      name: 'Michael Brown',
-      company: 'Global Services',
-      email: 'michael.b@globalservices.com',
-      phone: '(555) 456-7890',
-      status: 'Qualified',
-      aiScore: 93,
-      lastContact: '3 days ago',
-      value: 12000,
-    },
-    {
-      id: "4",
-      name: 'Lisa Chen',
-      company: 'Innovative Tech',
-      email: 'lisa.chen@innovtech.com',
-      phone: '(555) 789-0123',
-      status: 'Proposal',
-      aiScore: 68,
-      lastContact: 'Today',
-      value: 15000,
-    },
-    {
-      id: "5",
-      name: 'David Wilson',
-      company: 'First Capital',
-      email: 'david.w@firstcapital.com',
-      phone: '(555) 234-5678',
-      status: 'Negotiation',
-      aiScore: 91,
-      lastContact: 'Yesterday',
-      value: 22000,
-    },
-    {
-      id: "6",
-      name: 'Jennifer Lee',
-      company: 'Modern Solutions',
-      email: 'jennifer@modernsolutions.com',
-      phone: '(555) 111-2222',
-      status: 'Won',
-      aiScore: 95,
-      lastContact: '3 days ago',
-      value: 30000,
+  const fetchPipelineData = async () => {
+    try {
+      const { stage, dealValue, dealAge } = filters;
+      const res = await axios.get("http://localhost:5000/api/v1/pipeline/filter", {
+        params: { stage, dealValue, dealAge },
+      });
+      setPipelineData(res.data || []);
+      console.log("pipelineData", res.data)
+    } catch (error) {
+      console.error("Error fetching pipeline data:", error);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchPipelineData();
+  }, [filters]);
 
   const handleAddDeal = (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,21 +90,17 @@ const Pipeline = () => {
       <PopoverContent className="w-56 p-4">
         <div className="space-y-4">
           <h4 className="font-medium text-sm">Deal Stage</h4>
-          <RadioGroup 
+          <RadioGroup
             defaultValue={filters.stage}
-            onValueChange={(value) => setFilters({...filters, stage: value})}
+            onValueChange={(value) => setFilters({ ...filters, stage: value })}
           >
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="all" id="all-stages" />
-              <Label htmlFor="all-stages">All Stages</Label>
+              <RadioGroupItem value="all_stages" id="all_stages" />
+              <Label htmlFor="all_stages">All Stages</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="new" id="new" />
-              <Label htmlFor="new">New Leads</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="contacted" id="contacted" />
-              <Label htmlFor="contacted">Contacted</Label>
+              <Label htmlFor="new">New</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="qualified" id="qualified" />
@@ -191,25 +136,25 @@ const Pipeline = () => {
       <PopoverContent className="w-56 p-4">
         <div className="space-y-4">
           <h4 className="font-medium text-sm">Deal Value</h4>
-          <RadioGroup 
-            defaultValue={filters.value}
-            onValueChange={(value) => setFilters({...filters, value: value})}
+          <RadioGroup
+            defaultValue={filters.dealValue}
+            onValueChange={(value) => setFilters({ ...filters, dealValue: value })}
           >
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="all" id="all-values" />
-              <Label htmlFor="all-values">All Values</Label>
+              <RadioGroupItem value="all_values" id="all_values" />
+              <Label htmlFor="all_values">All Values</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="low" id="low-value" />
-              <Label htmlFor="low-value">Under ₹10,000</Label>
+              <RadioGroupItem value="under_200000" id="under_200000" />
+              <Label htmlFor="under_200000">Under ₹200,000</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="medium" id="medium-value" />
-              <Label htmlFor="medium-value">₹10,000 - ₹50,000</Label>
+              <RadioGroupItem value="200000_500000" id="200000_500000" />
+              <Label htmlFor="200000_500000">₹200,000 - ₹500,000</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="high" id="high-value" />
-              <Label htmlFor="high-value">Over ₹50,000</Label>
+              <RadioGroupItem value="over_500000" id="over_500000" />
+              <Label htmlFor="over_500000">Over ₹500,000</Label>
             </div>
           </RadioGroup>
         </div>
@@ -229,67 +174,29 @@ const Pipeline = () => {
       <PopoverContent className="w-56 p-4">
         <div className="space-y-4">
           <h4 className="font-medium text-sm">Deal Age</h4>
-          <RadioGroup 
-            defaultValue={filters.age}
-            onValueChange={(value) => setFilters({...filters, age: value})}
+          <RadioGroup
+            defaultValue={filters.dealAge}
+            onValueChange={(value) => setFilters({ ...filters, dealAge: value })}
           >
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="all" id="all-ages" />
-              <Label htmlFor="all-ages">All Time</Label>
+              <RadioGroupItem value="all_time" id="all_time" />
+              <Label htmlFor="all_time">All Time</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="today" id="today" />
               <Label htmlFor="today">Today</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="week" id="week" />
-              <Label htmlFor="week">This Week</Label>
+              <RadioGroupItem value="this_week" id="this_week" />
+              <Label htmlFor="this_week">This Week</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="month" id="month" />
-              <Label htmlFor="month">This Month</Label>
+              <RadioGroupItem value="this_month" id="this_month" />
+              <Label htmlFor="this_month">This Month</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="quarter" id="quarter" />
-              <Label htmlFor="quarter">This Quarter</Label>
-            </div>
-          </RadioGroup>
-        </div>
-      </PopoverContent>
-    </Popover>
-  );
-
-  const AssigneeFilter = () => (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8 mr-2">
-          <Users className="mr-2 h-4 w-4" />
-          Assignee
-          <ChevronDown className="ml-2 h-4 w-4" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-56 p-4">
-        <div className="space-y-4">
-          <h4 className="font-medium text-sm">Assigned To</h4>
-          <RadioGroup 
-            defaultValue={filters.assignee}
-            onValueChange={(value) => setFilters({...filters, assignee: value})}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="all" id="all-assignees" />
-              <Label htmlFor="all-assignees">All Assignees</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="me" id="me" />
-              <Label htmlFor="me">Assigned to Me</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="unassigned" id="unassigned" />
-              <Label htmlFor="unassigned">Unassigned</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="team" id="team" />
-              <Label htmlFor="team">My Team</Label>
+              <RadioGroupItem value="this_quarter" id="this_quarter" />
+              <Label htmlFor="this_quarter">This Quarter</Label>
             </div>
           </RadioGroup>
         </div>
@@ -300,7 +207,7 @@ const Pipeline = () => {
   return (
     <PageLayout>
       <div className="container mx-auto px-4 py-8">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -308,20 +215,20 @@ const Pipeline = () => {
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">Sales Pipeline</h1>
+              <h1 className="text-2xl font-bold tracking-tight">Pipeline</h1>
               <p className="text-muted-foreground">Track and manage your deals from lead to close.</p>
             </div>
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="flex items-center gap-1"
                 onClick={() => setShowFilters(!showFilters)}
               >
                 <Filter className="h-4 w-4" />
                 <span>Filter</span>
               </Button>
-              
+
               <Dialog open={showAddDealForm} onOpenChange={setShowAddDealForm}>
                 <DialogTrigger asChild>
                   <Button size="sm" className="flex items-center gap-1">
@@ -342,18 +249,18 @@ const Pipeline = () => {
                         <Label htmlFor="company-name">Company Name</Label>
                         <Input id="company-name" placeholder="Enter company name" required />
                       </div>
-                      
+
                       <div className="space-y-2">
                         <Label htmlFor="contact-name">Contact Name</Label>
                         <Input id="contact-name" placeholder="Enter contact name" required />
                       </div>
-                      
+
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="deal-value">Deal Value (₹)</Label>
                           <Input id="deal-value" type="number" placeholder="0" required />
                         </div>
-                        
+
                         <div className="space-y-2">
                           <Label htmlFor="deal-stage">Deal Stage</Label>
                           <Select required defaultValue="new">
@@ -370,12 +277,12 @@ const Pipeline = () => {
                           </Select>
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <Label htmlFor="email">Contact Email</Label>
                         <Input id="email" type="email" placeholder="email@example.com" />
                       </div>
-                      
+
                       <div className="space-y-2">
                         <Label htmlFor="phone">Contact Phone</Label>
                         <Input id="phone" type="tel" placeholder="+91 12345 67890" />
@@ -396,27 +303,27 @@ const Pipeline = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
               title="Total Pipeline Value"
-              value={92500}
+              value={`${pipelineData?.totalValue}K`}
               icon={<BarChart3 className="h-4 w-4 text-primary" />}
               change={{ value: 12, trend: 'up' }}
               isCurrency={true}
             />
             <StatCard
               title="Open Deals"
-              value={15}
+              value={pipelineData?.totalNewDeals}
               icon={<CreditCard className="h-4 w-4 text-primary" />}
               change={{ value: 5, trend: 'up' }}
             />
             <StatCard
               title="Avg. Deal Size"
-              value={18500}
+              value={`${pipelineData?.avgDealSizeK}K`}
               icon={<ListFilter className="h-4 w-4 text-primary" />}
               change={{ value: 3, trend: 'down' }}
               isCurrency={true}
             />
             <StatCard
-              title="Avg. Sales Cycle"
-              value="14 days"
+              title="Avg. Cycle"
+              value={`${pipelineData?.avgCycle} days`}
               icon={<Clock className="h-4 w-4 text-primary" />}
               change={{ value: 2, trend: 'down' }}
             />
@@ -436,7 +343,6 @@ const Pipeline = () => {
                 <StageFilter />
                 <DealValueFilter />
                 <AgeFilter />
-                <AssigneeFilter />
               </div>
             </motion.div>
           )}
@@ -455,11 +361,6 @@ const Pipeline = () => {
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsContent value="kanban" className="mt-0">
-                  <div className="w-full overflow-x-auto">
-                    <SalesKanban leads={leads} />
-                  </div>
-                </TabsContent>
                 <TabsContent value="list" className="mt-0">
                   <div className="overflow-x-auto">
                     <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -474,27 +375,38 @@ const Pipeline = () => {
                         </tr>
                       </thead>
                       <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
-                        {leads.map((lead) => (
-                          <tr key={lead.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                        {pipelineData?.deals?.map((lead, index) => (
+                          <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="font-medium">{lead.company}</div>
+                              <div className="font-medium capitalize">{lead.company}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div>{lead.name}</div>
+                              <div className="capitalize">{lead.name}</div>
                               <div className="text-sm text-gray-500">{lead.email}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="font-medium">₹{lead.value.toLocaleString('en-IN')}</div>
+                              <div className="font-medium">
+                                ₹
+                                {Number(lead.value.replace(/[^0-9.-]+/g, "")).toLocaleString("en-IN")}
+                              </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                ${lead.status === 'New' ? 'bg-blue-100 text-blue-800' : 
-                                lead.status === 'Contacted' ? 'bg-purple-100 text-purple-800' :
-                                lead.status === 'Qualified' ? 'bg-cyan-100 text-cyan-800' :
-                                lead.status === 'Proposal' ? 'bg-amber-100 text-amber-800' :
-                                lead.status === 'Negotiation' ? 'bg-orange-100 text-orange-800' :
-                                'bg-green-100 text-green-800'}`}>
-                                {lead.status}
+                              <span
+                                className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+          ${lead.stage?.toLowerCase() === "new"
+                                    ? "bg-blue-100 text-blue-800"
+                                    : lead.stage?.toLowerCase() === "contacted"
+                                      ? "bg-purple-100 text-purple-800"
+                                      : lead.stage?.toLowerCase() === "qualified"
+                                        ? "bg-cyan-100 text-cyan-800"
+                                        : lead.stage?.toLowerCase() === "proposal"
+                                          ? "bg-amber-100 text-amber-800"
+                                          : lead.stage?.toLowerCase() === "negotiation"
+                                            ? "bg-orange-100 text-orange-800"
+                                            : "bg-green-100 text-green-800"
+                                  }`}
+                              >
+                                {lead.stage}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -503,12 +415,13 @@ const Pipeline = () => {
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center">
                                 <div className="text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5">
-                                  {lead.aiScore}%
+                                  {lead.aiScore}
                                 </div>
                               </div>
                             </td>
                           </tr>
                         ))}
+
                       </tbody>
                     </table>
                   </div>
