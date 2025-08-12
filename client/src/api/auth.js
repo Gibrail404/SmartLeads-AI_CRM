@@ -61,7 +61,9 @@ export const getAnalytics = async () => {
 }
 
 //Pipelines
-export const getPipelines = async () => {
-  const res = await api.get('/pipeline/filter'); 
+export const getPipelines = async ({ stage, dealValue, dealAge }) => {
+  const res = await api.get('/pipeline/filter', {
+    params: { stage, dealValue, dealAge }
+  });
   return res.data;
 }

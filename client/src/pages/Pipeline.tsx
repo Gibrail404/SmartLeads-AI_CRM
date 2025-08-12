@@ -43,7 +43,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import StatCard from '@/components/ui-custom/StatCard';
-import axios from 'axios';
+import getPipelines from '@/api/auth';
 
 const Pipeline = () => {
   const [showAddDealForm, setShowAddDealForm] = useState(false);
@@ -58,11 +58,9 @@ const Pipeline = () => {
 
   const fetchPipelineData = async () => {
     try {
-      const { stage, dealValue, dealAge } = filters;
-      const res = await axios.get("http://localhost:5000/api/v1/pipeline/filter", {
-        params: { stage, dealValue, dealAge },
-      });
-      setPipelineData(res.data || []);
+      // const { stage, dealValue, dealAge } = filters;
+      const res = await getPipelines(filters);
+      setPipelineData(res || []);
       console.log("pipelineData", res.data)
     } catch (error) {
       console.error("Error fetching pipeline data:", error);
