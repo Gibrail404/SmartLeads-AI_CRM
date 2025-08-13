@@ -13,6 +13,7 @@ import { Plus, Search, Filter, ArrowUpDown } from 'lucide-react';
 import LeadCard, { LeadData } from '@/components/ui-custom/LeadCard';
 import AddLeadDialog from '@/components/ui-custom/AddLeadDialog';
 import { getLeads } from '../api/auth.js';
+import Loader from '@/components/ui/loader.js';
 
 const Leads = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -90,11 +91,7 @@ const Leads = () => {
             </CardContent>
           </Card>
 
-          {loading && (
-            <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            </div>
-          )}
+          {loading && <Loader/>}
           {error && <p className="text-red-500">{error}</p>}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/table";
 import { useEffect, useState } from 'react';
 import { getUser, updateUser } from '@/api/auth';
+import Loader from '@/components/ui/loader';
 
 const Profile = () => {
   const [user, setUser] = useState({});
@@ -132,7 +133,7 @@ const Profile = () => {
   year: 'numeric'
 });
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loader/>;
 
 
   return (

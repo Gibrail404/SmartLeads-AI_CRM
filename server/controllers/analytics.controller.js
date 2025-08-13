@@ -151,14 +151,9 @@ export const getLeadAnalytics = async (req, res) => {
         });
 
         const blueShades = [
-            '#60A5FA', // blue-400
-            '#34D399', // green-400
-            '#FBBF24', // yellow-400
-            '#A78BFA', // purple-400
-            '#38BDF8', // sky-400 (extra blue tone)
-            '#4ADE80', // emerald-400 (extra green tone)
-            '#FACC15', // amber-400 (extra yellow tone)
-            '#C084FC', // violet-400 (extra purple tone)
+            '#60A5FA', 
+            '#306eb5d7', 
+            '#38BDF8', 
         ];
         const leadSourceData = Object.entries(leadSourceCounts).map(([source, count], index) => ({
             source,

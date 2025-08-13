@@ -40,6 +40,7 @@ import {
   Legend
 } from 'recharts';
 import { getAnalytics } from '@/api/auth';
+import Loader from '@/components/ui/loader';
 
 
 const Analytics = () => {
@@ -69,7 +70,7 @@ const Analytics = () => {
   if (loading) {
     return (
       <PageLayout>
-        <div className="p-8 text-center text-muted-foreground">Loading analytics...</div>
+        <Loader/>
       </PageLayout>
     );
   }

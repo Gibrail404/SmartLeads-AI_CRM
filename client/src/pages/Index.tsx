@@ -53,7 +53,7 @@ const Index = () => {
               <div className="relative rounded-xl overflow-hidden shadow-xl border border-gray-200 dark:border-gray-800">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
                 <img 
-                  src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&q=80" 
+                  src="./laptopUse.png" 
                   alt="Dashboard Preview" 
                   className="w-full rounded-xl"
                 />

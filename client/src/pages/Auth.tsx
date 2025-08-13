@@ -73,7 +73,7 @@ const Auth = () => {
         <Card>
           <CardHeader className="text-center">
             <div className="h-12 w-12 rounded-lg bg-primary flex items-center justify-center mx-auto mb-4">
-              <span className="text-white font-bold text-lg">CR</span>
+              <span className="text-white font-bold text-lg">SL</span>
             </div>
             <CardTitle className="text-2xl">Welcome to SmartLeads AI</CardTitle>
           </CardHeader>
