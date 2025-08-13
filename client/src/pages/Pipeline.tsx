@@ -43,6 +43,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import StatCard from '@/components/ui-custom/StatCard';
 import { getPipelines } from '@/api/auth';
+import Loader from '@/components/ui/loader';
 
 const Pipeline = () => {
   const [showAddDealForm, setShowAddDealForm] = useState(false);
@@ -54,15 +55,19 @@ const Pipeline = () => {
     dealAge: "all_time",
   });
   const [pipelineData, setPipelineData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
 
   const fetchPipelineData = async () => {
+    setLoading(true);
     try {
-      // const { stage, dealValue, dealAge } = filters;
       const res = await getPipelines(filters);
       setPipelineData(res);
-      console.log("pipelineData", res.data)
+      console.log("pipelineData", res.data);
     } catch (error) {
       console.error("Error fetching pipeline data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -298,32 +303,40 @@ const Pipeline = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard
-              title="Total Pipeline Value"
-              value={`${pipelineData?.totalValue}K`}
-              icon={<BarChart3 className="h-4 w-4 text-primary" />}
-              change={{ value: 12, trend: 'up' }}
-              isCurrency={true}
-            />
-            <StatCard
-              title="Open Deals"
-              value={pipelineData?.totalNewDeals}
-              icon={<CreditCard className="h-4 w-4 text-primary" />}
-              change={{ value: 5, trend: 'up' }}
-            />
-            <StatCard
-              title="Avg. Deal Size"
-              value={`${pipelineData?.avgDealSizeK}K`}
-              icon={<ListFilter className="h-4 w-4 text-primary" />}
-              change={{ value: 3, trend: 'down' }}
-              isCurrency={true}
-            />
-            <StatCard
-              title="Avg. Cycle"
-              value={`${pipelineData?.avgCycle} days`}
-              icon={<Clock className="h-4 w-4 text-primary" />}
-              change={{ value: 2, trend: 'down' }}
-            />
+            {loading ? (
+              <div className="col-span-4 flex justify-center py-6">
+                <Loader />
+              </div>
+            ) : (
+              <>
+                <StatCard
+                  title="Total Pipeline Value"
+                  value={`${pipelineData?.totalValue}K`}
+                  icon={<BarChart3 className="h-4 w-4 text-primary" />}
+                  change={{ value: 12, trend: 'up' }}
+                  isCurrency={true}
+                />
+                <StatCard
+                  title="Open Deals"
+                  value={pipelineData?.totalNewDeals}
+                  icon={<CreditCard className="h-4 w-4 text-primary" />}
+                  change={{ value: 5, trend: 'up' }}
+                />
+                <StatCard
+                  title="Avg. Deal Size"
+                  value={`${pipelineData?.avgDealSizeK}K`}
+                  icon={<ListFilter className="h-4 w-4 text-primary" />}
+                  change={{ value: 3, trend: 'down' }}
+                  isCurrency={true}
+                />
+                <StatCard
+                  title="Avg. Cycle"
+                  value={`${pipelineData?.avgCycle} days`}
+                  icon={<Clock className="h-4 w-4 text-primary" />}
+                  change={{ value: 2, trend: 'down' }}
+                />
+              </>
+            )}
           </div>
 
           {showFilters && (
