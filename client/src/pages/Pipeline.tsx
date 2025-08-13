@@ -40,10 +40,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import StatCard from '@/components/ui-custom/StatCard';
-import getPipelines from '@/api/auth';
+import { getPipelines } from '@/api/auth';
 
 const Pipeline = () => {
   const [showAddDealForm, setShowAddDealForm] = useState(false);
@@ -60,7 +59,7 @@ const Pipeline = () => {
     try {
       // const { stage, dealValue, dealAge } = filters;
       const res = await getPipelines(filters);
-      setPipelineData(res || []);
+      setPipelineData(res);
       console.log("pipelineData", res.data)
     } catch (error) {
       console.error("Error fetching pipeline data:", error);
